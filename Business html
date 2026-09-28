@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINKUP — Connect. Discover. Grow.</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#07110d;
+    color:#fff;
+}
+
+a{text-decoration:none;color:inherit}
+
+nav{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:#07110df2;
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid #193a2a;
+}
+
+.nav{
+    max-width:1100px;
+    margin:auto;
+    padding:18px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.logo span{color:#39ff88}
+
+.nav button{
+    background:transparent;
+    border:1px solid #39ff88;
+    color:#39ff88;
+    padding:10px 18px;
+    border-radius:9px;
+    font-weight:bold;
+}
+
+.hero{
+    min-height:80vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:50px 20px;
+}
+
+.hero-content{max-width:800px}
+
+.badge{
+    display:inline-block;
+    padding:8px 14px;
+    border:1px solid #24583e;
+    border-radius:30px;
+    color:#39ff88;
+    font-size:12px;
+    font-weight:bold;
+}
+
+h1{
+    font-size:clamp(45px,9vw,82px);
+    line-height:.95;
+    margin:22px 0;
+}
+
+.hero p{
+    color:#a7b8ae;
+    line-height:1.7;
+    max-width:650px;
+    margin:auto;
+}
+
+.actions{
+    margin-top:30px;
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:0;
+    border-radius:10px;
+    padding:14px 22px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.primary{
+    background:#39ff88;
+    color:#031008;
+}
+
+.secondary{
+    background:#101f17;
+    border:1px solid #24583e;
+    color:white;
+}
+
+section{
+    padding:70px 20px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.section-title p{
+    color:#91a49a;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.card{
+    background:#0b1912;
+    border:1px solid #193a2a;
+    border-radius:16px;
+    padding:25px;
+}
+
+.card .icon{
+    font-size:30px;
+    margin-bottom:15px;
+}
+
+.card p{
+    color:#91a49a;
+    line-height:1.6;
+    font-size:14px;
+}
+
+.choose{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    max-width:800px;
+    margin:auto;
+}
+
+.choice{
+    background:#0b1912;
+    border:1px solid #193a2a;
+    border-radius:18px;
+    padding:35px;
+    text-align:center;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.choice:hover{
+    transform:translateY(-4px);
+    border-color:#39ff88;
+}
+
+.choice-icon{
+    font-size:45px;
+    margin-bottom:15px;
+}
+
+footer{
+    text-align:center;
+    padding:35px;
+    color:#718278;
+    border-top:1px solid #193a2a;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#000b;
+    z-index:500;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal.active{display:flex}
+
+.modal-box{
+    width:100%;
+    max-width:430px;
+    background:#0b1912;
+    border:1px solid #24583e;
+    border-radius:18px;
+    padding:28px;
+    position:relative;
+}
+
+.close{
+    position:absolute;
+    right:18px;
+    top:15px;
+    background:none;
+    border:0;
+    color:#aaa;
+    font-size:25px;
+}
+
+.modal h2{
+    margin-top:0;
+}
+
+label{
+    display:block;
+    margin-top:15px;
+    margin-bottom:7px;
+    color:#b8c7bf;
+    font-size:13px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border-radius:9px;
+    border:1px solid #294a38;
+    background:#06100b;
+    color:#fff;
+    outline:none;
+}
+
+input:focus{
+    border-color:#39ff88;
+}
+
+.form-btn{
+    width:100%;
+    margin-top:20px;
+}
+
+.google{
+    width:100%;
+    margin-top:12px;
+    background:#fff;
+    color:#111;
+}
+
+.message{
+    margin-top:15px;
+    text-align:center;
+    font-size:13px;
+    color:#39ff88;
+}
+
+.links{
+    text-align:center;
+    margin-top:15px;
+    font-size:13px;
+    color:#9aaba1;
+}
+
+.links span{
+    color:#39ff88;
+    cursor:pointer;
+}
+
+@media(max-width:800px){
+    .grid{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:550px){
+    .grid,.choose{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="nav">
+    <div class="logo">LINK<span>UP</span></div>
+    <button onclick="openLogin()">Login</button>
+</div>
+</nav>
+
+<section class="hero">
+<div class="hero-content">
+
+    <span class="badge">THE CONNECTION PLATFORM</span>
+
+    <h1>Connect.<br>Discover.<br><span style="color:#39ff88">Grow.</span></h1>
+
+    <p>
+        LINKUP connects customers with businesses,
+        services and opportunities in one simple platform.
+    </p>
+
+    <div class="actions">
+        <button class="btn primary" onclick="openJoin()">
+            GET STARTED
+        </button>
+
+        <button class="btn secondary"
+                onclick="document.getElementById('features').scrollIntoView()">
+            EXPLORE
+        </button>
+    </div>
+
+</div>
+</section>
+
+<section id="features">
+<div class="container">
+
+<div class="section-title">
+<h2>Everything in one place</h2>
+<p>A simple platform for customers and businesses.</p>
+</div>
+
+<div class="grid">
+
+<div class="card">
+<div class="icon">🔎</div>
+<h3>Discover</h3>
+<p>Find businesses and services around you.</p>
+</div>
+
+<div class="card">
+<div class="icon">📅</div>
+<h3>Book</h3>
+<p>Connect with businesses and arrange services.</p>
+</div>
+
+<div class="card">
+<div class="icon">💬</div>
+<h3>Connect</h3>
+<p>Communicate directly with businesses.</p>
+</div>
+
+<div class="card">
+<div class="icon">📈</div>
+<h3>Grow</h3>
+<p>Businesses can reach new customers.</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<section>
+<div class="container">
+
+<div class="section-title">
+<h2>Who are you?</h2>
+<p>Choose your account type to continue.</p>
+</div>
+
+<div class="choose">
+
+<div class="choice" onclick="selectAccount('customer')">
+<div class="choice-icon">👤</div>
+<h2>I'm a Customer</h2>
+<p>Discover businesses and services.</p>
+</div>
+
+<div class="choice" onclick="selectAccount('business')">
+<div class="choice-icon">🏢</div>
+<h2>I'm a Business</h2>
+<p>Create your business profile and reach customers.</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<footer>
+LINKUP © 2026 — Connect. Discover. Grow.
+</footer>
+
+
+<!-- LOGIN MODAL -->
+
+<div class="modal" id="loginModal">
+
+<div class="modal-box">
+
+<button class="close" onclick="closeModals()">×</button>
+
+<h2>Welcome back</h2>
+<p style="color:#91a49a">Log in to your LINKUP account.</p>
+
+<form id="loginForm">
+
+<label>Email</label>
+<input id="loginEmail" type="email" required>
+
+<label>Password</label>
+<input id="loginPassword" type="password" required>
+
+<button class="btn primary form-btn" type="submit">
+LOGIN
+</button>
+
+</form>
+
+<button class="btn google" onclick="googleLogin()">
+Continue with Google
+</button>
+
+<div class="links">
+Forgot password? <span onclick="forgotPassword()">Reset</span>
+</div>
+
+<div class="links">
+Don't have an account?
+<span onclick="switchToJoin()">Create one</span>
+</div>
+
+<div id="loginMessage" class="message"></div>
+
+</div>
+</div>
+
+
+<!-- JOIN MODAL -->
+
+<div class="modal" id="joinModal">
+
+<div class="modal-box">
+
+<button class="close" onclick="closeModals()">×</button>
+
+<h2>Create your LINKUP account</h2>
+
+<p style="color:#91a49a">
+Create an account to continue.
+</p>
+
+<form id="signupForm">
+
+<label>Name</label>
+<input id="signupName" required>
+
+<label>Email</label>
+<input id="signupEmail" type="email" required>
+
+<label>Password</label>
+<input id="signupPassword" type="password" minlength="8" required>
+
+<button class="btn primary form-btn" type="submit">
+CREATE ACCOUNT
+</button>
+
+</form>
+
+<button class="btn google" onclick="googleLogin()">
+Continue with Google
+</button>
+
+<div class="links">
+Already have an account?
+<span onclick="switchToLogin()">Login</span>
+</div>
+
+<div id="signupMessage" class="message"></div>
+
+</div>
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://lbloazuluhceiqgvfyqg.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_DNrCcJqiDArfDwCysvUDsA_EEmHjQxl";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+let selectedUserType =
+localStorage.getItem("linkup_account_type") || null;
+
+
+/* MODALS */
+
+function openLogin(){
+    closeModals();
+    document.getElementById("loginModal").classList.add("active");
+}
+
+function openJoin(){
+    closeModals();
+    document.getElementById("joinModal").classList.add("active");
+}
+
+function closeModals(){
+    document.querySelectorAll(".modal")
+        .forEach(m => m.classList.remove("active"));
+}
+
+function switchToJoin(){
+    closeModals();
+    openJoin();
+}
+
+function switchToLogin(){
+    closeModals();
+    openLogin();
+}
+
+
+/* ACCOUNT TYPE */
+
+function selectAccount(type){
+
+    selectedUserType = type;
+
+    localStorage.setItem(
+        "linkup_account_type",
+        type
+    );
+
+    openJoin();
+}
+
+
+/* SIGN UP */
+
+document.getElementById("signupForm")
+.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const name =
+        document.getElementById("signupName").value.trim();
+
+    const email =
+        document.getElementById("signupEmail").value.trim();
+
+    const password =
+        document.getElementById("signupPassword").value;
+
+    const msg =
+        document.getElementById("signupMessage");
+
+    if(!selectedUserType){
+
+        msg.textContent =
+        "Please choose Customer or Business first.";
+
+        return;
+    }
+
+    msg.textContent = "Creating account...";
+
+    const {data,error} =
+        await supabaseClient.auth.signUp({
+
+        email,
+        password,
+
+        options:{
+            data:{
+                full_name:name,
+                account_type:selectedUserType
+            }
+        }
+
+    });
+
+    if(error){
+
+        msg.textContent = error.message;
+        return;
+    }
+
+    if(data.session){
+
+        redirectUser(data.session.user);
+
+    }else{
+
+        msg.textContent =
+        "Account created. Check your email and confirm your account.";
+
+    }
+
+});
+
+
+/* LOGIN */
+
+document.getElementById("loginForm")
+.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const email =
+        document.getElementById("loginEmail").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+    const msg =
+        document.getElementById("loginMessage");
+
+    msg.textContent = "Logging in...";
+
+    const {data,error} =
+        await supabaseClient.auth.signInWithPassword({
+
+        email,
+        password
+
+    });
+
+    if(error){
+
+        msg.textContent = error.message;
+        return;
+    }
+
+    redirectUser(data.user);
+
+});
+
+
+/* GOOGLE */
+
+async function googleLogin(){
+
+    const {error} =
+        await supabaseClient.auth.signInWithOAuth({
+
+        provider:"google",
+
+        options:{
+            redirectTo:
+            window.location.origin +
+            window.location.pathname
+        }
+
+    });
+
+    if(error){
+        alert(error.message);
+    }
+
+}
+
+
+/* ROUTING */
+
+async function redirectUser(user){
+
+    let type =
+        user?.user_metadata?.account_type;
+
+    if(!type){
+        type =
+        localStorage.getItem("linkup_account_type");
+    }
+
+    if(type === "business"){
+
+        window.location.replace("business.html");
+        return;
+
+    }
+
+    if(type === "customer"){
+
+        window.location.replace("customer.html");
+        return;
+
+    }
+
+    /*
+      Google users who haven't selected
+      Customer/Business yet.
+    */
+
+    closeModals();
+
+    openJoin();
+
+}
+
+
+/* AUTH STATE */
+
+supabaseClient.auth.onAuthStateChange(
+    async function(event,session){
+
+    if(event === "SIGNED_IN" && session){
+
+        setTimeout(function(){
+
+            redirectUser(session.user);
+
+        },300);
+
+    }
+
+});
+
+
+/* CHECK EXISTING SESSION */
+
+(async function(){
+
+    const {data} =
+        await supabaseClient.auth.getSession();
+
+    if(data.session){
+
+        redirectUser(data.session.user);
+
+    }
+
+})();
+
+
+/* PASSWORD RESET */
+
+async function forgotPassword(){
+
+    const email =
+        prompt("Enter your LINKUP email:");
+
+    if(!email) return;
+
+    const {error} =
+        await supabaseClient.auth
+        .resetPasswordForEmail(email,{
+            redirectTo:
+            window.location.origin +
+            window.location.pathname
+        });
+
+    if(error){
+
+        alert(error.message);
+
+    }else{
+
+        alert("Password reset email sent.");
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
