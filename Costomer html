@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LINKUP — Customer</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#07110d;
+    color:white;
+}
+
+button,input{
+    font-family:inherit;
+}
+
+nav{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:#07110df5;
+    border-bottom:1px solid #193a2a;
+    backdrop-filter:blur(10px);
+}
+
+.nav{
+    max-width:1100px;
+    margin:auto;
+    padding:17px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.logo span{
+    color:#39ff88;
+}
+
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.email{
+    color:#91a49a;
+    font-size:13px;
+    max-width:180px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.logout{
+    background:transparent;
+    color:#39ff88;
+    border:1px solid #39ff88;
+    padding:9px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:30px 20px 60px;
+}
+
+.welcome{
+    margin-bottom:25px;
+}
+
+.welcome h1{
+    margin:0 0 8px;
+    font-size:32px;
+}
+
+.welcome p{
+    margin:0;
+    color:#91a49a;
+}
+
+.search{
+    display:flex;
+    gap:10px;
+    margin-bottom:25px;
+}
+
+.search input{
+    flex:1;
+    background:#0b1912;
+    color:white;
+    border:1px solid #294a38;
+    border-radius:10px;
+    padding:15px;
+    outline:none;
+    font-size:15px;
+}
+
+.search input:focus{
+    border-color:#39ff88;
+}
+
+.search button{
+    background:#39ff88;
+    color:#031008;
+    border:0;
+    border-radius:10px;
+    padding:0 20px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:35px;
+}
+
+.action{
+    background:#0b1912;
+    border:1px solid #193a2a;
+    border-radius:15px;
+    padding:20px;
+    cursor:pointer;
+    text-align:left;
+    transition:.2s;
+}
+
+.action:hover{
+    border-color:#39ff88;
+    transform:translateY(-2px);
+}
+
+.action-icon{
+    font-size:27px;
+    margin-bottom:10px;
+}
+
+.action h3{
+    margin:0 0 6px;
+}
+
+.action p{
+    margin:0;
+    color:#91a49a;
+    font-size:13px;
+}
+
+.section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.section-title h2{
+    margin:0;
+}
+
+.status{
+    color:#39ff88;
+    font-size:13px;
+}
+
+.business-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.business-card{
+    background:#0b1912;
+    border:1px solid #193a2a;
+    border-radius:17px;
+    padding:22px;
+}
+
+.business-icon{
+    width:55px;
+    height:55px;
+    border-radius:14px;
+    background:#13251a;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    margin-bottom:15px;
+}
+
+.business-card h3{
+    margin:0 0 8px;
+}
+
+.category{
+    color:#39ff88;
+    font-size:13px;
+    margin-bottom:10px;
+}
+
+.business-card p{
+    color:#91a49a;
+    line-height:1.5;
+    font-size:14px;
+}
+
+.location{
+    color:#b7c6bd;
+    font-size:13px;
+    margin:15px 0;
+}
+
+.card-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.card-buttons button{
+    flex:1;
+    padding:11px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.book{
+    background:#39ff88;
+    color:#031008;
+    border:0;
+}
+
+.save{
+    background:transparent;
+    color:white;
+    border:1px solid #294a38;
+}
+
+.empty{
+    text-align:center;
+    padding:40px 20px;
+    background:#0b1912;
+    border:1px dashed #294a38;
+    border-radius:15px;
+    color:#91a49a;
+    grid-column:1/-1;
+}
+
+.message{
+    text-align:center;
+    color:#91a49a;
+    padding:20px;
+}
+
+@media(max-width:800px){
+    .actions{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .business-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:550px){
+    .email{
+        display:none;
+    }
+
+    .search{
+        flex-direction:column;
+    }
+
+    .search button{
+        padding:14px;
+    }
+
+    .actions{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .business-grid{
+        grid-template-columns:1fr;
+    }
+
+    .welcome h1{
+        font-size:27px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="nav">
+
+        <div class="logo">
+            LINK<span>UP</span>
+        </div>
+
+        <div class="nav-right">
+
+            <div id="userEmail" class="email"></div>
+
+            <button class="logout" onclick="logout()">
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+</nav>
+
+
+<div class="container">
+
+    <div class="welcome">
+        <h1>Welcome to LINKUP 👋</h1>
+        <p>Discover businesses and services that match what you need.</p>
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="search">
+
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="Search businesses or services..."
+            oninput="searchBusinesses()"
+        >
+
+        <button onclick="searchBusinesses()">
+            Search
+        </button>
+
+    </div>
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="actions">
+
+        <div class="action" onclick="scrollToBusinesses()">
+            <div class="action-icon">🔎</div>
+            <h3>Find</h3>
+            <p>Discover businesses.</p>
+        </div>
+
+        <div class="action" onclick="showMessage('Your bookings will appear here.')">
+            <div class="action-icon">📅</div>
+            <h3>Bookings</h3>
+            <p>Manage appointments.</p>
+        </div>
+
+        <div class="action" onclick="showMessage('Messaging will be available soon.')">
+            <div class="action-icon">💬</div>
+            <h3>Messages</h3>
+            <p>Talk to businesses.</p>
+        </div>
+
+        <div class="action" onclick="showMessage('Your saved businesses will appear here.')">
+            <div class="action-icon">❤️</div>
+            <h3>Saved</h3>
+            <p>Keep favorites.</p>
+        </div>
+
+    </div>
+
+
+    <!-- BUSINESSES -->
+
+    <div id="businessesSection">
+
+        <div class="section-title">
+
+            <h2>Discover Businesses</h2>
+
+            <div class="status" id="businessStatus">
+                Loading...
+            </div>
+
+        </div>
+
+
+        <div
+            class="business-grid"
+            id="businessList"
+        >
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://lbloazuluhceiqgvfyqg.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_DNrCcJqiDArfDwCysvUDsA_EEmHjQxl";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+let allBusinesses = [];
+
+
+/* CHECK LOGIN */
+
+async function checkUser(){
+
+    const {data,error} =
+        await supabaseClient.auth.getSession();
+
+    if(error){
+
+        console.error(error);
+
+        window.location.replace("index.html");
+
+        return;
+    }
+
+    if(!data.session){
+
+        window.location.replace("index.html");
+
+        return;
+    }
+
+    document.getElementById("userEmail").textContent =
+        data.session.user.email || "";
+
+    loadBusinesses();
+}
+
+
+/* LOAD BUSINESSES */
+
+async function loadBusinesses(){
+
+    const status =
+        document.getElementById("businessStatus");
+
+    status.textContent = "Loading...";
+
+
+    const {data,error} =
+        await supabaseClient
+        .from("businesses")
+        .select("*")
+        .order("name",{ascending:true});
+
+
+    if(error){
+
+        console.error(error);
+
+        status.textContent = "";
+
+        document.getElementById("businessList").innerHTML =
+
+        `<div class="empty">
+            Unable to load businesses.<br><br>
+            ${escapeHtml(error.message)}
+        </div>`;
+
+        return;
+    }
+
+
+    allBusinesses = data || [];
+
+    displayBusinesses(allBusinesses);
+}
+
+
+/* DISPLAY BUSINESSES */
+
+function displayBusinesses(businesses){
+
+    const list =
+        document.getElementById("businessList");
+
+    const status =
+        document.getElementById("businessStatus");
+
+
+    status.textContent =
+        businesses.length +
+        (businesses.length === 1
+            ? " business"
+            : " businesses");
+
+
+    if(!businesses.length){
+
+        list.innerHTML =
+
+        `<div class="empty">
+            No businesses found yet.
+        </div>`;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        businesses.map(function(business){
+
+            return `
+
+            <div class="business-card">
+
+                <div class="business-icon">
+                    🏢
+                </div>
+
+                <h3>
+                    ${escapeHtml(business.name || "Unnamed Business")}
+                </h3>
+
+                <div class="category">
+                    ${escapeHtml(business.category || "Business")}
+                </div>
+
+                <p>
+                    ${escapeHtml(
+                        business.description ||
+                        "No description available."
+                    )}
+                </p>
+
+                <div class="location">
+                    📍 ${escapeHtml(
+                        business.location ||
+                        "Location not provided"
+                    )}
+                </div>
+
+                <div class="card-buttons">
+
+                    <button
+                        class="book"
+                        onclick="bookBusiness('${escapeJs(business.name || "Business")}')"
+                    >
+                        Book
+                    </button>
+
+                    <button
+                        class="save"
+                        onclick="saveBusiness('${escapeJs(business.name || "Business")}')"
+                    >
+                        ♡ Save
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        }).join("");
+}
+
+
+/* SEARCH */
+
+function searchBusinesses(){
+
+    const query =
+        document.getElementById("searchInput")
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    if(!query){
+
+        displayBusinesses(allBusinesses);
+
+        return;
+    }
+
+
+    const filtered =
+        allBusinesses.filter(function(business){
+
+            return (
+
+                (business.name || "")
+                .toLowerCase()
+                .includes(query)
+
+                ||
+
+                (business.category || "")
+                .toLowerCase()
+                .includes(query)
+
+                ||
+
+                (business.description || "")
+                .toLowerCase()
+                .includes(query)
+
+                ||
+
+                (business.location || "")
+                .toLowerCase()
+                .includes(query)
+
+            );
+
+        });
+
+
+    displayBusinesses(filtered);
+}
+
+
+/* BOOK */
+
+function bookBusiness(name){
+
+    alert(
+        "Booking request for " +
+        name +
+        " will be available soon."
+    );
+}
+
+
+/* SAVE */
+
+function saveBusiness(name){
+
+    alert(
+        name +
+        " has been saved. Saved businesses will be available soon."
+    );
+}
+
+
+/* SCROLL */
+
+function scrollToBusinesses(){
+
+    document
+    .getElementById("businessesSection")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+}
+
+
+/* MESSAGE */
+
+function showMessage(message){
+
+    alert(message);
+}
+
+
+/* LOGOUT */
+
+async function logout(){
+
+    await supabaseClient.auth.signOut();
+
+    localStorage.removeItem(
+        "linkup_account_type"
+    );
+
+    window.location.replace("index.html");
+}
+
+
+/* SECURITY */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function escapeJs(value){
+
+    return String(value)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'");
+}
+
+
+/* START */
+
+checkUser();
+
+</script>
+
+</body>
+</html>
